@@ -15,5 +15,5 @@ export class Book {
     averageScore: number;
 
     @OneToMany(() => LoanRecord, loanRecord => loanRecord.book)
-    borrowedBooks: LoanRecord[];
+    usersBorrowed: LoanRecord[];
 }

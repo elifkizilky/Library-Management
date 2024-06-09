@@ -11,7 +11,7 @@ export class LoanRecord {
     @JoinColumn({ name: 'user_id' })
     user: User;
 
-    @ManyToOne(() => Book, book => book.borrowedBooks)
+    @ManyToOne(() => Book, book => book.usersBorrowed)
     @JoinColumn({ name: 'book_id' })
     book: Book;
 

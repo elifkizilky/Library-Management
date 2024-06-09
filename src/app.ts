@@ -6,7 +6,7 @@ import swaggerSpec from './config/swagger';
 import { Database } from './dataSource'; 
 import userRoutes from './routes/userRoutes';
 import bookRoutes from './routes/bookRoutes';
-import borrowRoutes from './routes/borrowRoutes';
+import loanRoutes from './routes/loanRoutes';
 
 dotenv.config();
 
@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(userRoutes);
 app.use(bookRoutes);
-app.use(borrowRoutes);
+app.use(loanRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get('/', (req, res) => {

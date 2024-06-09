@@ -1,5 +1,5 @@
 import express from 'express';
-import { borrowBook, returnBook } from '../controllers/bookController';
+import { borrowBook, returnBook, deleteLoanRecord } from '../controllers/loanController';
 import { param, body } from 'express-validator';
 import { validate } from '../middleware/validate';
 
@@ -9,7 +9,7 @@ const borrowValidationRules = [
     param('userId').isInt({ min: 1 }).withMessage('User ID must be a positive integer'),
     param('bookId').isInt({ min: 1 }).withMessage('Book ID must be a positive integer')
 ];
-
+ 
 /**
  * @swagger
  * /users/{userId}/borrow/{bookId}:
@@ -80,8 +80,6 @@ const returnBookValidationRules = [
     param('bookId').isInt({ min: 1 }).withMessage('Book ID must be a positive integer'),
     body('score').toInt().isInt({ min: 1, max: 10 }).withMessage('Score must be an integer between 1 and 10')
 ];
-
-
 
 
 /**
@@ -172,6 +170,41 @@ const returnBookValidationRules = [
 
 router.post('/users/:userId/return/:bookId',  returnBookValidationRules,validate, returnBook);
 
+const deleteLoanRecordValidationRules = [
+    param('userId').isNumeric().withMessage('User ID must be a valid number'),
+    param('bookId').isNumeric().withMessage('Book ID must be a valid number')
+];
+
+/**
+ * @swagger
+ * /loan-records/users/{userId}/books/{bookId}:
+ *   delete:
+ *     summary: Delete a loan record for a specific user and book
+ *     description: Deletes a loan record based on the user ID and book ID provided. This endpoint should be used to remove records where a book has been returned and scored.
+ *     tags:
+ *       - Delete Record
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the user associated with the loan record
+ *       - in: path
+ *         name: bookId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the book associated with the loan record
+ *     responses:
+ *       204:
+ *         description: Loan record deleted successfully
+ *       404:
+ *         description: No active loan record found for this book and user
+ *       500:
+ *         description: Internal server error due to an unexpected issue
+ */
+router.delete('/loan-records/users/:userId/books/:bookId', deleteLoanRecordValidationRules , deleteLoanRecord);
 
 
 
