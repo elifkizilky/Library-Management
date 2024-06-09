@@ -12,6 +12,6 @@ export class User {
     name: string
 
     @OneToMany(() => LoanRecord, loanRecord => loanRecord.user)
-    borrowedBooks: LoanRecord[]
+    loanRecords: LoanRecord[]
    
 }

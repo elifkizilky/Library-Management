@@ -7,4 +7,5 @@ module.exports = {
         '**/?(*.)+(spec|test).[tj]s?(x)'
     ],
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+    setupFilesAfterEnv: ['./src/testSetup.ts'],
 };

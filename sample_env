@@ -1,0 +1,19 @@
+# Database configuration
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=yourpassword
+DB_DATABASE=libraryApp
+
+# Application settings
+PORT=3000
+NODE_ENV=development
+
+# Logging
+DB_LOGGING=true
+DB_SYNCHRONIZE=true
+
+# For docker
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=yourpassword
+POSTGRES_DB=libraryApp

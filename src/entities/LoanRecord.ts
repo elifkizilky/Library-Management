@@ -7,11 +7,11 @@ export class LoanRecord {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => User, user => user.borrowedBooks, { onDelete: 'SET NULL' })
+    @ManyToOne(() => User, user => user.loanRecords, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'user_id' })
     user: User;
 
-    @ManyToOne(() => Book, book => book.usersBorrowed, { onDelete: 'SET NULL' })
+    @ManyToOne(() => Book, book => book.loanRecords, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'book_id' })
     book: Book;
 

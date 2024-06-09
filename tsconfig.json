@@ -106,6 +106,6 @@
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
   },
-  "include": ["src/**/*.ts", "src/**/*.js", "src/dataSource.ts"],   // Files to be included in compilation
+  "include": ["src/**/*.ts", "src/**/*.js", "src/dataSource.ts", "src/testsetup.ts"],   // Files to be included in compilation
   "exclude": ["node_modules"] // Folders to be excluded from compilation
 }

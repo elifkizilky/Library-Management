@@ -1,5 +1,4 @@
 import "reflect-metadata";
-import express from 'express';
 import dotenv from 'dotenv';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './config/swagger';
@@ -7,6 +6,8 @@ import { Database } from './dataSource';
 import userRoutes from './routes/userRoutes';
 import bookRoutes from './routes/bookRoutes';
 import loanRoutes from './routes/loanRoutes';
+import express, { Request, Response, NextFunction } from 'express';
+import logger from './logger';
 
 dotenv.config();
 
@@ -24,10 +25,25 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
+// Error handling middleware
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.error(err); 
+  const status = err.status || 500;
+  const message = err.message || 'An unexpected internal server error occurred!';
+  logger.error(`Error: ${message}`);
+
+  res.status(status).json({
+      error: message,
+      details: err.details || null
+  });
+});
+
+ 
+let server: any;
 Database.initialize()
   .then(() => {
     console.log("Data Source has been initialized!");
-    app.listen(PORT, () => {
+    server = app.listen(PORT, () => {
       console.log(`Server running on http://localhost:${PORT}`);
       console.log(`Swagger docs available on http://localhost:${PORT}/api-docs`);
     });
@@ -39,4 +55,5 @@ Database.initialize()
 
 
 export default app;
+export { server, Database };
 

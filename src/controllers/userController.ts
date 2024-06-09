@@ -73,7 +73,7 @@ export const getUser = async (req: Request, res: Response) => {
 
     const user = await userRepository.findOne({
         where: { id: userId },
-        relations: ["borrowedBooks", "borrowedBooks.book"]
+        relations: ["loanRecords", "loanRecords.book"]
     });
 
     if (!user) {
@@ -86,7 +86,7 @@ export const getUser = async (req: Request, res: Response) => {
     }
     
 
-    const formattedBooks = user.borrowedBooks.reduce<{ past: BookInfo[], present: BookInfo[] }>((acc, borrow) => {
+    const formattedBooks = user.loanRecords.reduce<{ past: BookInfo[], present: BookInfo[] }>((acc, borrow) => {
         const bookInfo: BookInfo = {
             name: borrow.book.name,
             userScore: borrow.score

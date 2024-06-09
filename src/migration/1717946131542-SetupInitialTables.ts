@@ -15,7 +15,7 @@ export class SetupInitialTables1717946131542 implements MigrationInterface {
         await queryRunner.query(`
             CREATE TABLE "book" (
                 "id" SERIAL PRIMARY KEY,
-                "name" VARCHAR(255) NOT NULL UNIQUE
+                "name" VARCHAR(255) NOT NULL UNIQUE,
                 "averageScore" FLOAT DEFAULT -1
             );
         `);
@@ -36,9 +36,9 @@ export class SetupInitialTables1717946131542 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TABLE "loan_record"`);
-        await queryRunner.query(`DROP TABLE "book"`);
-        await queryRunner.query(`DROP TABLE "user"`);
+        await queryRunner.query(`DROP TABLE IF EXISTS "loan_record"`);
+        await queryRunner.query(`DROP TABLE IF EXISTS "book"`);
+        await queryRunner.query(`DROP TABLE IF EXISTS "user"`);
     }
 
 }
