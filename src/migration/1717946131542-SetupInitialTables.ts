@@ -29,8 +29,8 @@ export class SetupInitialTables1717946131542 implements MigrationInterface {
                 "borrowedDate" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
                 "returnedDate" TIMESTAMP WITH TIME ZONE,
                 "score" INTEGER,
-                FOREIGN KEY ("user_id") REFERENCES "user"("id"),
-                FOREIGN KEY ("book_id") REFERENCES "book"("id")
+                FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE SET NULL,
+                FOREIGN KEY ("book_id") REFERENCES "book"("id") ON DELETE SET NULL
             );
         `);
     }

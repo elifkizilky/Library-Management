@@ -243,6 +243,8 @@ const deleteBookValidationRules =   [
  *     responses:
  *       204:
  *         description: Book deleted successfully
+ *       400:
+ *         description: Invalid input
  *       404:
  *         description: Book not found
  *       500:

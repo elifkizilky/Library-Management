@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { Database } from '../dataSource';
 import { User } from '../entities/User';
+import { IsNull } from 'typeorm';
+import { LoanRecord } from '../entities/LoanRecord';
 import logger from '../logger'; 
 import { Like } from "typeorm";
 
@@ -32,7 +34,7 @@ export const createUser = async (req: Request, res: Response) => {
         }
     }
 };
-
+ 
 
 export const getAllUsers = async (req: Request, res: Response) => {
     const page = parseInt(req.query.page as string) || 1;
@@ -136,7 +138,22 @@ export const deleteUser = async (req: Request, res: Response) => {
     const userId = parseInt(req.params.userId);
 
     const userRepository = Database.getRepository(User);
+    const loanRecordRepository = Database.getRepository(LoanRecord);
     try {
+         // Check for active loan records (unreturned books)
+         const activeLoans = await loanRecordRepository.find({
+            where: {
+                user: { id: userId },
+                returnedDate: IsNull()
+            }
+        });
+
+        if (activeLoans.length > 0) {
+            // If there are active loans, prevent deletion and inform the requester
+            return res.status(400).json({
+                message: "User cannot be deleted because there are unreturned books."
+            });
+        }
         const result = await userRepository.delete(userId);
         if (result.affected === 0) {
             return res.status(404).json({ message: "User not found" });

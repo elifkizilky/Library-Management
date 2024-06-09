@@ -255,6 +255,8 @@ const deleteUserValidationRules =  [
  *     responses:
  *       204:
  *         description: User deleted successfully
+ *       400:
+ *         description: Validation error, data provided is invalid.
  *       404:
  *         description: User not found
  *       500:

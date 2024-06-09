@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
 import { Database } from '../dataSource';
 import { Book } from '../entities/Book';
+import { LoanRecord } from '../entities/LoanRecord';
 import logger from '../logger'; 
-import { Like } from "typeorm";
+import { Like, IsNull } from "typeorm";
 import { User } from '../entities/User';
 
 export const createBook = async (req: Request, res: Response) => {
@@ -109,8 +110,23 @@ export const deleteBook = async (req: Request, res: Response) => {
     const bookId = parseInt(req.params.bookId);
 
     const bookRepository = Database.getRepository(Book);
+    const loanRecordRepository = Database.getRepository(LoanRecord);
 
     try {
+         // Check for active loan records (book currently borrowed)
+         const activeLoans = await loanRecordRepository.find({
+            where: {
+                book: { id: bookId },
+                returnedDate: IsNull()
+            }
+        });
+
+        if (activeLoans.length > 0) {
+            // If there are active loans, prevent deletion and inform the requester
+            return res.status(400).json({
+                message: "Book cannot be deleted because it is currently borrowed."
+            });
+        }
         const result = await bookRepository.delete(bookId);
         if (result.affected === 0) {
             return res.status(404).json({ message: "Book not found" });
