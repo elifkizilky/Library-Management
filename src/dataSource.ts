@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
  
 console.log(__dirname)
-export const AppDataSource = new DataSource({
+export const Database = new DataSource({
     type: "postgres",
     host: process.env.DB_HOST,
     port: parseInt(process.env.DB_PORT || "5432"),
@@ -18,7 +18,7 @@ export const AppDataSource = new DataSource({
     logging: process.env.DB_LOGGING === "true"
 });
 
-AppDataSource.initialize()
+Database.initialize()
     .then(() => {
         console.log("Data source has been initialized!");
     })

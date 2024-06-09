@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { BorrowedBook } from "./BorrowedBook";
+import { LoanRecord } from "./LoanRecord";
 
 @Entity()
 export class Book {
@@ -7,10 +7,13 @@ export class Book {
     id: number;
 
     @Column({
-        unique: true
+        unique: true  
     })
     name: string;
 
-    @OneToMany(() => BorrowedBook, borrowedBook => borrowedBook.book)
-    borrowedBooks: BorrowedBook[];
+    @Column({ type: "float", nullable: true, default: -1 })
+    averageScore: number;
+
+    @OneToMany(() => LoanRecord, loanRecord => loanRecord.book)
+    borrowedBooks: LoanRecord[];
 }

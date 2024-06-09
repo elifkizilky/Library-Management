@@ -1,7 +1,7 @@
 import express from 'express';
-import { borrowBook, returnBook } from '../controllers/borrowController';
+import { borrowBook, returnBook } from '../controllers/bookController';
 import { param, body } from 'express-validator';
-import { validate } from '../middleware/validateBorrow';
+import { validate } from '../middleware/validate';
 
 const router = express.Router();
 
@@ -41,7 +41,7 @@ const borrowValidationRules = [
  *         description: Server error
  * components:
  *   schemas:
- *     BorrowedBook:
+ *     LoanRecord:
  *       type: object
  *       properties:
  *         id:
@@ -139,7 +139,7 @@ const returnBookValidationRules = [
  *         description: Internal Server Error
  *   components:
  *   schemas:
- *     BorrowedBook:
+ *     LoanRecord:
  *       type: object
  *       properties:
  *         id:

@@ -1,13 +1,13 @@
 import "reflect-metadata";
 import express from 'express';
-import { DataSource } from "typeorm";
 import dotenv from 'dotenv';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './config/swagger';
-import { AppDataSource } from './dataSource'; 
+import { Database } from './dataSource'; 
 import userRoutes from './routes/userRoutes';
 import bookRoutes from './routes/bookRoutes';
 import borrowRoutes from './routes/borrowRoutes';
+
 dotenv.config();
 
 const app = express();
@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-AppDataSource.initialize()
+Database.initialize()
   .then(() => {
     console.log("Data Source has been initialized!");
     app.listen(PORT, () => {
@@ -36,6 +36,7 @@ AppDataSource.initialize()
     console.error("Error during Data Source initialization", error);
     process.exit(1);
   });
+
 
 export default app;
 

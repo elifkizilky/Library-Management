@@ -3,7 +3,7 @@ import { User } from "./User";
 import { Book } from "./Book";
 
 @Entity()
-export class BorrowedBook {
+export class LoanRecord {
     @PrimaryGeneratedColumn()
     id: number;
 
