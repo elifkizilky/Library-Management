@@ -100,21 +100,9 @@ router.post('/users', validateCreateUser, userController.createUser);
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/User'
- *                 total:
- *                   type: integer
- *                   description: Total number of users.
- *                 page:
- *                   type: integer
- *                   description: Current page number.
- *                 last_page:
- *                   type: integer
- *                   description: Total number of pages.
+ *                type: array
+ *                items:
+ *                  $ref: '#/components/schemas/User'
  *       500:
  *         description: Server error
  * components:
@@ -233,7 +221,7 @@ const updateUserValidationRules = [
  *       500:
  *         description: Internal server error
  */
-router.patch('/users/:userId', updateUserValidationRules , userController.updateUser);
+router.patch('/users/:userId', updateUserValidationRules ,validateCreateUser, userController.updateUser);
  
 const deleteUserValidationRules =  [
     param('userId').isNumeric().withMessage('User ID must be a valid number')

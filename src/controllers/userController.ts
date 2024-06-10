@@ -53,7 +53,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
             take: limit,
             skip
         });
-        logger.info(`User list fetched: ${users.length} books found out of ${total}`)
+        logger.info(`User list fetched: ${users.length} users found out of ${total}`)
         res.status(200).json(users);
     } catch (error) {
         if (error instanceof Error) {

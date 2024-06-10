@@ -220,7 +220,7 @@ const updateBookValidationRules =  [
  *       500:
  *         description: Internal server error
  */
-router.put('/books/:bookId',updateBookValidationRules, updateBook);
+router.put('/books/:bookId',updateBookValidationRules, validateBook, updateBook);
 
 const deleteBookValidationRules =   [
     param('bookId').isNumeric().withMessage('Book ID must be a number')
