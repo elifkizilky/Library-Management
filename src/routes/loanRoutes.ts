@@ -204,7 +204,7 @@ const deleteLoanRecordValidationRules = [
  *       500:
  *         description: Internal server error due to an unexpected issue
  */
-router.delete('/loan-records/users/:userId/books/:bookId', deleteLoanRecordValidationRules , deleteLoanRecord);
+router.delete('/loan-records/users/:userId/books/:bookId', deleteLoanRecordValidationRules , validate, deleteLoanRecord);
 
 
 

@@ -250,6 +250,6 @@ const deleteUserValidationRules =  [
  *       500:
  *         description: Internal server error
  */
-router.delete('/users/:userId', deleteUserValidationRules , userController.deleteUser);
+router.delete('/users/:userId', deleteUserValidationRules , validate, userController.deleteUser);
 
 export default router;

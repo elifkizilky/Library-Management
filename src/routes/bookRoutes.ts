@@ -250,7 +250,7 @@ const deleteBookValidationRules =   [
  *       500:
  *         description: Internal server error
  */
-router.delete('/books/:bookId',deleteBookValidationRules, deleteBook);
+router.delete('/books/:bookId',deleteBookValidationRules, validate, deleteBook);
 
 
 /**
@@ -303,7 +303,7 @@ const updateUserScoreValidationRules =  [
     body('newScore').isFloat({ min: 0, max: 10 }).withMessage('Score must be between 0 and 10')
 ]
 
-router.patch('/books/:bookId/users/:userId/score', updateUserScoreValidationRules, updateUserScore);
+router.patch('/books/:bookId/users/:userId/score', updateUserScoreValidationRules, validate, updateUserScore);
 
 
 export default router;
