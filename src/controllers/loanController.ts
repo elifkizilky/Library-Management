@@ -4,6 +4,7 @@ import { LoanRecord } from '../entities/LoanRecord';
 import { Not, IsNull } from "typeorm";
 import { User } from '../entities/User';
 import { Book } from '../entities/Book';
+import logger from '../logger';
 
 
 export const borrowBook = async (req: Request, res: Response) => {
@@ -19,10 +20,13 @@ export const borrowBook = async (req: Request, res: Response) => {
         const book = await bookRepository.findOneBy({ id: bookId });
 
         if (!user && !book) {
+            logger.warn(`User with the id ${userId} and book with the id ${bookId} not found`)
             return res.status(404).send('User and Book not found');
         } else if (!user) {
+            logger.warn(`User with the id ${userId} not found`)
             return res.status(404).send('User not found');
         } else if (!book) {
+            logger.warn(`Book with the id ${bookId} not found`)
             return res.status(404).send('Book not found');
         }
 
@@ -42,10 +46,12 @@ export const borrowBook = async (req: Request, res: Response) => {
         });
         
         if (userBorrow){
+            logger.warn(`User with the ${userId} already borrowed this book with the id ${bookId}`)
             return res.status(403).json({ message: 'User already borrowed this book' });
         }
 
         if (activeBorrow) {
+            logger.warn(`This book with the id ${bookId} is currently borrowed by another user`)
             return res.status(403).json({ message: 'This book is currently borrowed by another user' });
         }
 
@@ -56,6 +62,7 @@ export const borrowBook = async (req: Request, res: Response) => {
         });
 
         await borrowRepository.save(newBorrow);
+        logger.info(`User with the id ${userId} borrowed the book with the id ${bookId}`)
         res.status(204).send();
     } catch (error) {
         res.status(500).json({ message: "Error borrowing book", error: error instanceof Error ? error.message : "Unknown error" });
@@ -80,12 +87,15 @@ export const returnBook = async (req: Request, res: Response) => {
         ]);
 
         if (!user && !book) {
+            logger.warn(`User with the id ${userId} and book with the id ${bookId} not found`)
             return res.status(404).json({ message: 'User and Book not found' });
         }
         if (!user) {
+            logger.warn(`User with the id ${userId} not found`)
             return res.status(404).json({ message: 'User not found' });
         }
         if (!book) {
+            logger.warn(`This book with the id ${bookId} is currently borrowed by another user`)
             return res.status(404).json({ message: 'Book not found' });
         }
     
@@ -99,7 +109,8 @@ export const returnBook = async (req: Request, res: Response) => {
 
       
         if (!loanRecord) {
-            return res.status(404).json({ message: "No active borrow found for this book and user." });
+            logger.warn(`No active loan record found for this book with the id ${bookId} and the user with the id ${userId}`)
+            return res.status(404).json({ message: "No active loan record found for this book and user." });
         }
 
         loanRecord.returnedDate = new Date();
@@ -121,6 +132,7 @@ export const returnBook = async (req: Request, res: Response) => {
         book.averageScore = parseFloat(averageScore.toFixed(2));        
         await bookRepository.save(book);
 
+        logger.info(`User with the id ${userId} returned the book with the id ${bookId} successfully`)
         res.status(204).send();
     } catch (error) {
         res.status(500).json({ message: "Error returning the book", error: error instanceof Error ? error.message : "Unknown error" });
@@ -140,11 +152,14 @@ export const updateUserScore = async (req: Request, res: Response) => {
         const user = await loanRepository.findOneBy({ id: userId });
         const book = await bookRepository.findOneBy({ id: bookId });
         if (!user && !book) {
+            logger.warn(`User with the id ${userId} and book with the id ${bookId} not found`)
             return res.status(404).json({ message: 'User and Book not found' });
         } else if (!user) {
+            logger.warn(`User with the id ${userId} not found`)
             return res.status(404).json({ message: 'User not found' });
         }
         else if (!book) {
+            logger.warn(`This book with the id ${bookId} is currently borrowed by another user`)
             return res.status(404).json({ message: 'Book not found' });
         }
         const loanRecord = await loanRepository.findOne({
@@ -156,6 +171,7 @@ export const updateUserScore = async (req: Request, res: Response) => {
         });
 
         if (!loanRecord) {
+            logger.warn(`No borrow record found for the user ${userId} and book ${bookId}`)
             return res.status(404).json({ message: "Borrow record not found." });
         }
 
@@ -164,6 +180,7 @@ export const updateUserScore = async (req: Request, res: Response) => {
 
         // Recalculate the average score
         await updateAverageScore(bookId, loanRepository, bookRepository);
+        logger.info(`Score updated successfully`)
         res.status(200).json({ message: "Score updated successfully" });
     } catch (error) {
         res.status(500).json({ message: "Error updating score", error: error instanceof Error ? error.message : "Unknown error" });
@@ -204,12 +221,15 @@ export const deleteLoanRecord = async (req: Request, res: Response) => {
         const user = await userRepository.findOneBy({ id: userId });
         const book = await bookRepository.findOneBy({ id: bookId });
         if (!user && !book) {
+            logger.warn(`User with the id ${userId} and book with the id ${bookId} not found`)
             return res.status(404).json({ message: 'User and Book not found' });
         }
         else if (!user) {
+            logger.warn(`User with the id ${userId} not found`)
             return res.status(404).json({ message: 'User not found' });
         }
         else if (!book) {
+            logger.warn(`This book with the id ${bookId} is currently borrowed by another user`)
             return res.status(404).json({ message: 'Book not found' });
         }
 
@@ -221,6 +241,7 @@ export const deleteLoanRecord = async (req: Request, res: Response) => {
         });
 
         if (!loanRecord) {
+            logger.warn(`No active loan record found for the user ${userId} and book ${bookId}`)
             return res.status(404).json({ message: "No active loan record found for this book and user." });
         }
 
@@ -236,6 +257,7 @@ export const deleteLoanRecord = async (req: Request, res: Response) => {
             await updateAverageScore(bookId, loanRepository, bookRepository);
         }
 
+        logger.info(`Loan record deleted successfully`)
         res.status(204).send();
     } catch (error) {
         res.status(500).json({ message: "Error deleting loan record", error: error instanceof Error ? error.message : "Unknown error" });

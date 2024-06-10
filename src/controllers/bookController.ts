@@ -17,6 +17,7 @@ export const createBook = async (req: Request, res: Response) => {
         const response = {
             name: newBook.name,
         };
+        logger.info(`New book is created ${newBook.id}`)
         res.status(201).json(response);
     } catch (error) {
         if (error instanceof Error) {
@@ -57,6 +58,7 @@ export const getAllBooks = async (req: Request, res: Response) => {
         logger.error(`Error fetching books: ${error.message}`);
         res.status(500).json({ message: "Error fetching books", error: error.message });
         } else {
+            logger.error(`Error fetching books`)
             res.status(500).json({ message: "Error fetching books", error: "Unknown error" });
         
         }
@@ -71,16 +73,24 @@ export const getBook = async (req: Request, res: Response) => {
         
         const book = await bookRepository.findOneBy({ id: bookId });
         if (!book) {
+            logger.warn(`Book not found with the id ${bookId}`)
             return res.status(404).json({ message: 'Book not found' });
         }
+        logger.info(`Book with the id ${bookId} is fetched`)
         res.status(200).json({
             id: book.id,
             name: book.name,
             score: book.averageScore
         });
     } catch (error) {
-        res.status(500).json({ message: "Error fetching book", error: error instanceof Error ? error.message : "Unknown error" });
+        if (error instanceof Error){
+        logger.error(`Error fetching book ${error.message}`)
+        res.status(500).json({ message: "Error fetching book", error: error.message });
+    } else {
+        logger.error(`Error fetching book`)
+        res.status(500).json({ message: "Error fetching book" });
     }
+}
    
 };
 
@@ -94,14 +104,22 @@ export const updateBook = async (req: Request, res: Response) => {
     try {
         const book = await bookRepository.findOneBy({ id: bookId });
         if (!book) {
+            logger.warn(`Book with the id ${bookId} not found`)
             return res.status(404).json({ message: 'Book not found' });
         }
 
         book.name = name;
         await bookRepository.save(book);
+        logger.info(`Book with the id ${bookId} updated successfully`)
         res.status(200).json({ message: 'Book updated successfully', book });
     } catch (error) {
-        res.status(500).json({ message: "Error updating book", error: error instanceof Error ? error.message : "Unknown error" });
+        if (error instanceof Error){
+            logger.error(`Error updating book ${error.message}`)
+            res.status(500).json({ message: "Error updating book", error: error.message });
+        } else {
+            logger.error(`Error updating book`)
+            res.status(500).json({ message: "Error updating book" });
+        }
     }
 };
 
@@ -122,6 +140,7 @@ export const deleteBook = async (req: Request, res: Response) => {
         });
 
         if (activeLoans.length > 0) {
+            logger.warn(`Book with the id ${bookId} cannot be deleted because it is currently borrowed.`)
             // If there are active loans, prevent deletion and inform the requester
             return res.status(400).json({
                 message: "Book cannot be deleted because it is currently borrowed."
@@ -129,10 +148,18 @@ export const deleteBook = async (req: Request, res: Response) => {
         }
         const result = await bookRepository.delete(bookId);
         if (result.affected === 0) {
+            logger.warn(`Book with the id ${bookId} not found.`)
             return res.status(404).json({ message: "Book not found" });
         }
+        logger.warn(`Book with the id ${bookId} deleted successfully.`)
         res.status(204).send();
     } catch (error) {
-        res.status(500).json({ message: "Error deleting book", error: error instanceof Error ? error.message : "Unknown error" });
+        if (error instanceof Error){
+            logger.error(`Error deleting book ${error.message}`)
+            res.status(500).json({ message: "Error deleting book", error: error.message });
+        } else {
+            logger.error(`Error deleting book`)
+            res.status(500).json({ message: "Error deleting book" });
+        }
     }
 };

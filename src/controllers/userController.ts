@@ -53,6 +53,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
             take: limit,
             skip
         });
+        logger.info(`User list fetched: ${users.length} books found out of ${total}`)
         res.status(200).json(users);
     } catch (error) {
         if (error instanceof Error) {
@@ -77,6 +78,7 @@ export const getUser = async (req: Request, res: Response) => {
     });
 
     if (!user) {
+        logger.warn(`user with the id ${userId} not found`)
         return res.status(404).json({ message: 'User not found' });
     }
 
@@ -124,11 +126,14 @@ export const updateUser = async (req: Request, res: Response) => {
 
         user.name = name;
         await userRepository.save(user);
+        logger.info("User updated successfully")
         res.status(200).json({ message: 'User updated successfully', user });
     } catch (error) {
         if (error instanceof Error) {
+            logger.error(`Error updating user: ${error.message}`)
         res.status(500).json({ message: "Error updating user", error: error.message });
         } else {
+            logger.error(`Error updating user`)
             res.status(500).json({ message: "Unknown error occurred" });
         }
     }
@@ -149,6 +154,7 @@ export const deleteUser = async (req: Request, res: Response) => {
         });
 
         if (activeLoans.length > 0) {
+            logger.warn(`User cannot be deleted because there are unreturned books.`)
             // If there are active loans, prevent deletion and inform the requester
             return res.status(400).json({
                 message: "User cannot be deleted because there are unreturned books."
@@ -158,11 +164,14 @@ export const deleteUser = async (req: Request, res: Response) => {
         if (result.affected === 0) {
             return res.status(404).json({ message: "User not found" });
         }
+        logger.info(`User deleted successfully`)
         res.status(204).send();
     } catch (error) {
         if (error instanceof Error) {
+            logger.error(`Error deleting user: ${error.message}`)
             res.status(500).json({ message: "Error deleting user", error: error.message });
         } else {
+            logger.error(`Error deleting the user`)
             res.status(500).json({ message: "Unknown error occurred" });
         }
     }
