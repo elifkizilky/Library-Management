@@ -36,6 +36,7 @@ Edit the .env file to include your PostgreSQL database settings and other config
 1. Build and Run with Docker Compose:
 
 ```bash
+npm run build
 docker-compose up --build
 ```
 This command builds the Docker images for the application and the PostgreSQL database, and then starts the containers. Your application should now be accessible at http://localhost:3000.
